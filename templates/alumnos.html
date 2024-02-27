@@ -2,18 +2,25 @@
 {% import '_macros.html' as macros %} // Add import statement for macros module
 {% block content %}
 <h1>ALUMNOS</h1>
-<form action="" method="POST" novalidate>
-    {{ form.hidden_tag() }}
-    {{ macros.render_field(form.nombre ,class="form-control") }}
-    {{ macros.render_field(form.apellido, class="form-control") }}
-    {{ macros.render_field(form.email, class="form-control") }}
-    {{ macros.render_field(form.edad, class="form-control") }}
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<ul>
+    {% for message in messages %}
+    <li>
+        {{ message }}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% endwith %}
+<form action="/alumnos" method="POST" novalidate>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    {{ macros.input_form(form.nombre ,class="form-control") }}
+    {{ macros.input_form(form.apellido, class="form-control") }}
+    {{ macros.input_form(form.email, class="form-control") }}
+    {{ macros.input_form(form.edad, class="form-control") }}
 
-    <input type="submit" value="Enviar">
+    <button type="submit" class="btn btn-success">ENVIAR</button>
 </form>
-
-<h1>
-    Nombre: {{ nombre }}
-</h1>
 
 {% endblock %}

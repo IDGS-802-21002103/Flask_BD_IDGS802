@@ -3,8 +3,19 @@
 {%endmacro%}
 
 {% macro input_form(field) %}
-<td>{{field.label}}</td>
-<dd>{{field(**kwargs)|safe}}</dd>
+<td>{{ field.label }}</td>
+
+<dd>{{ field(**kwargs)|safe }}</dd>
+
+{% if field.errors %}
+<ul>
+    {% for error in field.errors %}
+    <li style="color: red;">
+        {{ error }}
+    </li>
+    {% endfor %}
+</ul>
+{% endif %}
 {% endmacro %}
 
 {% macro render_field(field) %}
@@ -17,4 +28,23 @@
     {% endfor %}
 </ul>
 {% endif %}
+{% endmacro %}
+
+{% macro input_float(field) %}
+<div class="form-floating mb-3 mt-3">
+    
+    {{field(**kwargs)|safe}}
+    <label for="{{field.id}}">{{field.label}}</label>
+    
+    {% if field.errors %}
+    <ul>
+        {% for error in field.errors %}
+        <li style="color: red;">
+            {{ error }}
+        </li>
+        {% endfor %}
+    </ul>
+
+    {% endif %}
+</div>
 {% endmacro %}
