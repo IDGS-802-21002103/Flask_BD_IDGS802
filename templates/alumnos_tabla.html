@@ -23,18 +23,19 @@
                 <td>{{ alumno.apellidoMaterno }}</td>
                 <td>{{ alumno.email }}</td>
                 <td>
-                    <button  href="modificar.html?id={{ alumno.id }}" class="btn btn-danger">
-                        <span></span>
-                    </button>
-                    <button href="eliminar.html?id={{ alumno.id }}" class="btn btn-warning">
-                        <span></span>
-                    </button>                    
+                    
+                    <a href="/modificar?id={{ alumno.id }}" class="btn btn-warning">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </a>
+                    <a href="/eliminar?id={{ alumno.id }}" class="btn btn-danger">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
                 </td>
             </tr>
             {% endfor %}
         </tbody>
         <tfoot>
-            
+
         </tfoot>
     </table>
 </div>

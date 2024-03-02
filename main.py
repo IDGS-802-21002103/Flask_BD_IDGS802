@@ -1,12 +1,20 @@
 """Archivo principal de la aplicacion"""
 
-from flask import Flask, request, render_template, flash
+from math import log
+import re
+from venv import logger
+from flask import Flask, redirect, request, render_template, flash, url_for
 from flask_wtf.csrf import CSRFProtect
 from config import DevelopmentConfig
 from models import db, Alumno
 
 
 import forms
+import logging
+
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
@@ -42,7 +50,7 @@ def maestros():
 
 
 @app.route("/alumnos", methods=["GET", "POST"])
-def alumnos():
+def alumnos_form():
     """Funcion para mostrar los alumnos"""
     alumno_form = forms.UserForm(request.form)
 
@@ -65,9 +73,66 @@ def tabla_alumnos():
     return render_template("alumnos_tabla.html", alumnos=alumnos)
 
 
+@app.route("/eliminar", methods=["GET", "POST"])
+def eliminar():
+    '''Funcion para eliminar un alumno'''
+    alumno_form = forms.AlumnoForm(request.form)
+    if request.method == "GET":
+        id = request.args.get("id")
+        alumno = db.session.query(Alumno).filter(Alumno.id==id).first()
+        alumno_form.id.data = request.args.get("id")
+        alumno_form.nombre.data = alumno.nombre
+        alumno_form.apellidoPaterno.data = alumno.apellidoPaterno
+        alumno_form.apellidoMaterno.data = alumno.apellidoMaterno
+        alumno_form.email.data = alumno.email
+
+    if request.method == "POST":
+        id = alumno_form.id.data
+        alumno = Alumno.query.get(id)
+        if alumno is None:
+            flash("Alumno no encontrado.")
+            return redirect(url_for("tabla_alumnos"))
+        db.session.delete(alumno)
+        db.session.commit()
+        return redirect(url_for("tabla_alumnos"))
+
+    return render_template("eliminar.html", form=alumno_form)
+
+
+@app.route("/modificar", methods=["GET", "POST"])
+def modificar():
+    """Funcion para eliminar un alumno"""
+    alumno_form = forms.AlumnoForm(request.form)
+    if request.method == "GET":
+        id = request.args.get("id")
+        alumno = db.session.query(Alumno).filter(Alumno.id == id).first()
+        alumno_form.id.data = request.args.get("id")
+        alumno_form.nombre.data = alumno.nombre
+        alumno_form.apellidoPaterno.data = alumno.apellidoPaterno
+        alumno_form.apellidoMaterno.data = alumno.apellidoMaterno
+        alumno_form.email.data = alumno.email
+
+    if request.method == "POST":
+        id = alumno_form.id.data
+        alumno = Alumno.query.get(id)
+        if alumno is None:
+            flash("Alumno no encontrado.")
+            return redirect(url_for("tabla_alumnos"))
+        alumno.nombre = alumno_form.nombre.data
+        alumno.apellidoPaterno = alumno_form.apellidoPaterno.data   
+        alumno.apellidoMaterno = alumno_form.apellidoMaterno.data
+        alumno.email = alumno_form.email.data
+        
+        db.session.add(alumno)
+        db.session.commit()
+        return redirect(url_for("tabla_alumnos"))
+
+    return render_template("modificar.html", form=alumno_form)
+
+
 if __name__ == "__main__":
     csrf.init_app(app)
     db.init_app(app)
     with app.app_context():
         db.create_all()
-    app.run()
+    app.run(port=8000)

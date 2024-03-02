@@ -42,12 +42,12 @@ class AlumnoForm(Form):
     """Formulario para el registro de usuarios"""
 
     REQUIRED_FIELD_MESSAGE = "El campo es requerido"
-    id = StringField("Id", [validators.number_range(min=1, max=20, message="Valor no valido")])
+    id = StringField("Id")
     nombre = StringField(
         "Nombre",
         [
             validators.DataRequired(message=REQUIRED_FIELD_MESSAGE),
-            validators.length(min=4, max=10, message="Ingrese un nombre valido"),
+            validators.length(min=4, message="Ingrese un nombre valido"),
         ],
     )
     apellidoPaterno = StringField("Apellido Paterno")
